@@ -18,3 +18,5 @@ TMP_PASS=$(grep 'temporary password' /var/log/mysqld.log |  cut -d " " -f 13)
 mysql --connect-expired-password -uroot -p$TMP_PASS -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '${new_root_pass}';"
 mysql --connect-expired-password -uroot -p${new_root_pass} -e "CREATE USER '${client_username}'@'${client_cidr}' IDENTIFIED BY '${client_password}';"
 mysql --connect-expired-password -uroot -p${new_root_pass} -e "GRANT ALL PRIVILEGES ON * . * TO '${client_username}'@'${client_cidr}';"
+mysql --connect-expired-password -uroot -p${new_root_pass} -e "CREATE USER '${private_net_client_username}'@'${private_net_client_cidr}' IDENTIFIED BY '${private_net_client_password}';"
+mysql --connect-expired-password -uroot -p${new_root_pass} -e "GRANT ALL PRIVILEGES ON * . * TO '${private_net_client_username}'@'${private_net_client_cidr}';"

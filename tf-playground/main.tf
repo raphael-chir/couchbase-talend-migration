@@ -37,7 +37,7 @@ module "network" {
 }
 
 # Call compute module
-module "node01" {
+module "mysql_server" {
   source                 = "./modules/compute"
   depends_on             = [module.network]
   resource_tags          = var.resource_tags
@@ -47,6 +47,70 @@ module "node01" {
   root_volume_size       = 8
   user_data_script_path  = "scripts/mysql-init.sh"
   user_data_args         = var.mysql_configuration
+  ssh_public_key_name    = aws_key_pair.this.key_name
+  vpc_security_group_ids = module.network.vpc_security_group_ids
+  subnet_id              = module.network.subnet_id
+}
+
+# Call compute module
+module "talend_studio" {
+  source                 = "./modules/compute"
+  depends_on             = [module.network]
+  resource_tags          = var.resource_tags
+  base_name              = "ubuntu-18-04"
+  instance_ami_id        = "ami-022b0631072a1aefe"
+  instance_type          = "t3.2xlarge"
+  root_volume_size       = 12
+  user_data_script_path  = "scripts/talend-studio-init.sh"
+  user_data_args         = {services="data"}
+  ssh_public_key_name    = aws_key_pair.this.key_name
+  vpc_security_group_ids = module.network.vpc_security_group_ids
+  subnet_id              = module.network.subnet_id
+}
+
+# Call compute module
+module "cb_node01" {
+  source                 = "./modules/compute"
+  depends_on             = [module.network]
+  resource_tags          = var.resource_tags
+  base_name              = "cbnode01"
+  instance_ami_id        = "ami-08bdc08970fcbd34a"
+  instance_type          = "t3.medium"
+  root_volume_size       = 8
+  user_data_script_path  = "scripts/couchbase-cluster-init.sh"
+  user_data_args         = merge(var.couchbase_configuration, {services="data"})
+  ssh_public_key_name    = aws_key_pair.this.key_name
+  vpc_security_group_ids = module.network.vpc_security_group_ids
+  subnet_id              = module.network.subnet_id
+}
+
+# Call compute module
+module "cb_node02" {
+  source                 = "./modules/compute"
+  depends_on             = [module.cb_node01]
+  resource_tags          = var.resource_tags
+  base_name              = "cbnode02"
+  instance_ami_id        = "ami-08bdc08970fcbd34a"
+  instance_type          = "t3.medium"
+  root_volume_size       = 8
+  user_data_script_path  = "scripts/couchbase-server-add.sh"
+  user_data_args         = merge(var.couchbase_configuration, {cluster_uri=module.cb_node01.public_dns}, {services="data"})
+  ssh_public_key_name    = aws_key_pair.this.key_name
+  vpc_security_group_ids = module.network.vpc_security_group_ids
+  subnet_id              = module.network.subnet_id
+}
+
+# Call compute module
+module "cb_node03" {
+  source                 = "./modules/compute"
+  depends_on             = [module.cb_node01]
+  resource_tags          = var.resource_tags
+  base_name              = "cbnode03"
+  instance_ami_id        = "ami-08bdc08970fcbd34a"
+  instance_type          = "t3.medium"
+  root_volume_size       = 8
+  user_data_script_path  = "scripts/couchbase-server-add.sh"
+  user_data_args         = merge(var.couchbase_configuration, {cluster_uri=module.cb_node01.public_dns}, {services="data"})
   ssh_public_key_name    = aws_key_pair.this.key_name
   vpc_security_group_ids = module.network.vpc_security_group_ids
   subnet_id              = module.network.subnet_id

@@ -21,3 +21,8 @@ variable "mysql_configuration" {
   description = "Base Mysql configuration"
   type        = map(string)
 }
+
+variable "couchbase_configuration" {
+  description = "Map all configurations of a couchbase cluster"
+  type = map(string)
+}
