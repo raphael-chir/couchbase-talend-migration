@@ -2,6 +2,40 @@
 
 ## Use case
 
+## Configuration
+
+### Project
+
+Firstly in main.tf, give your bucket name and choose a key for tfstate file which will be created and used by terraform
+
+```bash
+# Shared tfstate
+terraform {
+  backend "s3" {
+    region = "eu-north-1"
+    key    = "couchbase-talend-migration-tfstate"
+    bucket = "a-tfstate-rch"
+  }
+}
+```
+
+Define your region and resource tags in tf-playground/terraform.tfvars
+
+### MySQL Setup
+
+MySQL 8 will be install. In tf-playground/terraform.tfvars replace values with yours :
+
+```bash
+mysql_configuration = {
+  new_root_pass    = "Route66!"
+  client_username  = "mcfly"
+  client_password  = "Zak3306!"
+  client_cidr      = "91.175.201.225"
+}
+```
+
+A new root pass is mandatory to operate database. Create client credentials : give a username and a password. Define client cidr, it can be IPV4 or IPV6 addresses, or a network range IPs.
+
 ## Keep control on your cloud resources
 
 | ![Labs](https://learn.hashicorp.com/_next/static/images/color-c0fe8380afabc1c58f5601c1662a2e2d.svg) | This demo shows you how to automate your architecture implementation in a **Cloud DevOps** approach with [Terraform](https://www.terraform.io/). |

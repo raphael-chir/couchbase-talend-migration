@@ -6,7 +6,7 @@
 terraform {
   backend "s3" {
     region = "eu-north-1"
-    key    = "mydemo-tfstate"
+    key    = "couchbase-talend-migration-tfstate"
     bucket = "a-tfstate-rch"
   }
 }
