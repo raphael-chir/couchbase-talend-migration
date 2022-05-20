@@ -16,3 +16,8 @@ variable "ssh_keys_path" {
   description = "SSH keys path"
   type        = string
 }
+
+variable "mysql_configuration" {
+  description = "Base Mysql configuration"
+  type        = map(string)
+}

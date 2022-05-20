@@ -41,11 +41,12 @@ module "node01" {
   source                 = "./modules/compute"
   depends_on             = [module.network]
   resource_tags          = var.resource_tags
-  base_name              = "rdbms"
-  instance_ami_id        = "ami-01ded35841bc93d7f"
+  base_name              = "mysql"
+  instance_ami_id        = "ami-08bdc08970fcbd34a"
   instance_type          = "t3.medium"
-  user_data_script_path  = "scripts/init-instance.sh"
-  user_data_args         = {services="data"}
+  root_volume_size       = 8
+  user_data_script_path  = "scripts/mysql-init.sh"
+  user_data_args         = var.mysql_configuration
   ssh_public_key_name    = aws_key_pair.this.key_name
   vpc_security_group_ids = module.network.vpc_security_group_ids
   subnet_id              = module.network.subnet_id
