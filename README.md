@@ -8,23 +8,33 @@ Talend Open Studio wrap Eclipse IDE and offers a tool to graphically design java
 
 From a MySQL Server prepopulated with a sample dataset available on [github](https://github.com/datacharmer/test_db), we will migrate all data to a Couchbase cluster "as is" :
 
-- The database will be migrated in a bucket,
-- Schema in a scope
-- Each table in collections
+- The database will be migrated in a couchbase bucket,
+- Schema in a couchbase scope
+- Each table in couchbase collections
 
 The environment is deployed in aws.  
 ![Labs](https://github.com/raphael-chir/couchbase-talend-migration/blob/main/usecase-schema.png?raw=true)
 
+Source database model can be seen as an aggregate domain of employees. We will integrate it into a scope.
 ![Labs](https://dev.mysql.com/doc/employee/en/images/employees-schema.png)
 
-## Configuration
+## Quick start
 
-### Project
+Use the link https://codesandbox.io/s/github/raphael-chir/couchbase-talend-migration to setup a vscode integrated development runtime environment, it contains aws-cli, terraform commands and everything you need to operate the demo, for more details go to section "Keep control on your cloud resources". However you can clone the repository and manage your own installations.  
+The purpose is to automatically deploy infrastructure and install these components :
 
-Firstly in main.tf, give your bucket name and choose a key for tfstate file which will be created and used by terraform
+- Mysql server v8
+- A desktop environment with Talend Open Studio installed
+- Couchbase 7 cluster containing 3 data nodes
+
+### Infrastructure setup
+
+Use aws configure command to provide your credentials.
+Create an S3 bucket that holds the terraform state file.
+Go to tf-playground folder. Firstly in main.tf, give your S3 bucket name and choose a key name for tfstate file which will be created and used by terraform
 
 ```bash
-# Shared tfstate
+# Example of shared tfstate
 terraform {
   backend "s3" {
     region = "eu-north-1"
@@ -34,30 +44,68 @@ terraform {
 }
 ```
 
-Define your region and resource tags in tf-playground/terraform.tfvars
+In tf-playground/terraform.tfvars define the aws region where infrastructure will be deployed and configure resource tags.
+Note : the amis used in this demo must be adapted for your region. See "How to choose your OS AMI" section below.
 
-### MySQL Setup
+### MySQL 8 Setup
 
-MySQL 8 will be install. In tf-playground/terraform.tfvars replace values with yours :
+In tf-playground/terraform.tfvars replace values with yours :
 
 ```bash
 mysql_configuration = {
-  new_root_pass    = "Route66!"
-  client_username  = "mcfly"
-  client_password  = "Zak3306!"
-  client_cidr      = "91.175.201.225"
+  new_root_pass               = "Route66!"
+  client_username             = "mcfly"
+  client_password             = "Zak3306!"
+  client_cidr                 = "91.175.201.225"
+  private_net_client_username = "talend"
+  private_net_client_password = "Talend2022!"
+  private_net_client_cidr     = "10.0.0.0/28"
 }
 ```
 
-A new root pass is mandatory to operate database. Create client credentials : give a username and a password. Define client cidr, it can be IPV4 or IPV6 addresses, or a network range IPs.
+1. A new root pass is mandatory to operate database.
+2. Create remote administrator credentials : give a username and a password.
+3. Define remote administrator cidr, it can be IPV4 or IPV6 addresses, or a network range IPs, but the best practice is to restrict to your IP.
+4. Define application credentials, here we give a range of private ips authorized to connect to mysql.
 
-## Talend Studio
+Take a look at tf-playground/scripts/mysql-init.sh to see how it works.
+
+### Talend Studio
+
+Talend Open Studio for Data Integration (CE) will be installed on a t32xlarge (8vCPU - 32G RAM), this can be adjust for your needs, but Talend is built on top of Eclipse and need resource to work in comfortable conditions. The OS used is Ubuntu 18-04 with lxde graphical.
+The installation is automatic so when finished you can use your favorite rdp client to connect to the workstation. Use ubuntu/ubuntu default credentials and modify your password to securize if needed (we are still in a demo).
+Take a look at tf-playground/scripts/talend-studio-init.sh to see how it works.
+
+Couchbase connectors are installed but for more possibilities in the logic data loading, it is better to use couchbase java sdk. Here are the libraries needed :
 
 [INFO] +- com.couchbase.client:java-client:jar:3.3.0:compile
 [INFO] | \- com.couchbase.client:core-io:jar:2.3.0:compile
 [INFO] | +- io.projectreactor:reactor-core:jar:3.4.17:compile
 [INFO] | \- org.reactivestreams:reactive-streams:jar:1.0.3:compile
 [INFO] \- com.couchbase.client:couchbase-transactions:jar:1.2.4:compile
+
+### Couchbase 7
+
+In tf-playground/terraform.tfvars replace values with yours :
+
+```bash
+couchbase_configuration = {
+  cluster_name    = "terracluster-playgound"
+  cluster_username  = "admin"
+  cluster_password  = "111111"
+}
+```
+
+### Deploy the stack
+
+Once everything is done, check aws configure and cd into tf-playground, lauch these commands :
+
+```bash
+tf init
+tf validate
+tf plan
+tf apply -auto-approve
+```
 
 ## Keep control on your cloud resources
 
