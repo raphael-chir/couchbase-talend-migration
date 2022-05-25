@@ -1,6 +1,18 @@
-# Couchbase talend migration
+# From Mysql to Couchbase with Talend
+
+Talend is a well known ETL tools used by a large number of company. As it is a comprehensive enterprise software suite, we will focus only on how migrate data from a relational model to Couchbase with Talend Community Edition through Talend Open Studio Data Integration.
+
+Talend Open Studio wrap Eclipse IDE and offers a tool to graphically design java jobs. You can also control the generated java code. Talend Open Studio needs a strong Desktop environment and must be configured to take benefits of the resources where it is installed.
 
 ## Use case
+
+From a MySQL Server prepopulated with a sample dataset available on [github](https://github.com/datacharmer/test_db), we will migrate all data to a Couchbase cluster "as is" :
+
+- The database will be migrated in a bucket,
+- Schema in a scope
+- Each table in collections
+
+![Labs](https://dev.mysql.com/doc/employee/en/images/employees-schema.png)
 
 ## Configuration
 
@@ -35,9 +47,6 @@ mysql_configuration = {
 ```
 
 A new root pass is mandatory to operate database. Create client credentials : give a username and a password. Define client cidr, it can be IPV4 or IPV6 addresses, or a network range IPs.
-
-Scripts creates a sample database based on https://github.com/datacharmer/test_db
-![Labs](https://dev.mysql.com/doc/employee/en/images/employees-schema.png)
 
 ## Talend Studio
 
