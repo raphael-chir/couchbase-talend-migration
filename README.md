@@ -12,6 +12,9 @@ From a MySQL Server prepopulated with a sample dataset available on [github](htt
 - Schema in a scope
 - Each table in collections
 
+The environment is deployed in aws.  
+![Labs](https://github.com/raphael-chir/couchbase-talend-migration/blob/main/usecase-schema.png?raw=true)
+
 ![Labs](https://dev.mysql.com/doc/employee/en/images/employees-schema.png)
 
 ## Configuration
