@@ -19,7 +19,7 @@ sleep 10
 
 #TODO sleep and check parameter store to see cluster node01 status
 # or check status response curl -I -u username:pwd http://ec2-13-51-235-54.eu-north-1.compute.amazonaws.com:8091/pools
-cluster_dns=$(ec2-metadata -p | cut -d " " -f 2)
+cluster_dns=$(ec2-metadata -o | cut -d " " -f 2)
 export PATH=$PATH:/opt/couchbase/bin
 
 timeout=360
@@ -36,5 +36,5 @@ while ((timeout > 0)); do
   fi
   ((timeout -= interval))
 done
-:'
-'
+# Enable service on startup
+systemctl enable --now couchbase-server

@@ -14,9 +14,9 @@ wget https://packages.couchbase.com/releases/7.0.3/couchbase-server-enterprise-7
 rpm --install couchbase-server-enterprise-7.0.3-amzn2.x86_64.rpm
 # Wait to complete
 sleep 10
-
 export PATH=$PATH:/opt/couchbase/bin
 cluster_dns=$(ec2-metadata -p | cut -d " " -f 2)
-
 # Node and cluster initialization
 couchbase-cli cluster-init  --cluster http://$cluster_dns:8091 --cluster-name ${cluster_name} --cluster-username ${cluster_username} --cluster-password ${cluster_password} --services ${services}
+# Enable service on startup
+systemctl enable --now couchbase-server

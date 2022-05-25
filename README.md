@@ -36,6 +36,17 @@ mysql_configuration = {
 
 A new root pass is mandatory to operate database. Create client credentials : give a username and a password. Define client cidr, it can be IPV4 or IPV6 addresses, or a network range IPs.
 
+Scripts creates a sample database based on https://github.com/datacharmer/test_db
+![Labs](https://dev.mysql.com/doc/employee/en/images/employees-schema.png)
+
+## Talend Studio
+
+[INFO] +- com.couchbase.client:java-client:jar:3.3.0:compile
+[INFO] | \- com.couchbase.client:core-io:jar:2.3.0:compile
+[INFO] | +- io.projectreactor:reactor-core:jar:3.4.17:compile
+[INFO] | \- org.reactivestreams:reactive-streams:jar:1.0.3:compile
+[INFO] \- com.couchbase.client:couchbase-transactions:jar:1.2.4:compile
+
 ## Keep control on your cloud resources
 
 | ![Labs](https://learn.hashicorp.com/_next/static/images/color-c0fe8380afabc1c58f5601c1662a2e2d.svg) | This demo shows you how to automate your architecture implementation in a **Cloud DevOps** approach with [Terraform](https://www.terraform.io/). |
